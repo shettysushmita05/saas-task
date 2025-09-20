@@ -1,64 +1,38 @@
 import React from 'react';
-import { Box, useTheme } from '@mui/material';
-import { motion } from 'framer-motion';
+import { useAppSelector } from '../../hooks';
 import TopNavbar from './TopNavbar';
 import LeftSidebar from './LeftSidebar';
 import RightSidebar from './RightSidebar';
-import { useAppSelector } from '../../hooks';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const theme = useTheme();
-  // const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { leftSidebarOpen, rightSidebarOpen } = useAppSelector((state) => state.theme);
+  const { mode } = useAppSelector((state) => state.theme);
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: theme.palette.background.default }}>
-      {/* Left Sidebar */}
-      {leftSidebarOpen && <LeftSidebar />}
+    <div className={`min-h-screen ${
+      mode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+    }`}>
+      {/* Top Navigation Bar - Fixed at top */}
+      <TopNavbar />
       
-      {/* Main Content Area */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-          backgroundColor: theme.palette.background.default,
-          transition: theme.transitions.create(['margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-          }),
-        }}
-      >
-        <TopNavbar />
+      <div className="flex pt-16">
+        {/* Left Sidebar */}
+        <LeftSidebar />
         
-        <Box
-          component="div"
-          sx={{
-            flexGrow: 1,
-            marginTop: '64px', // Height of AppBar
-            minHeight: 'calc(100vh - 64px)',
-            padding: 3,
-          }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+        {/* Main Content Area */}
+        <main className="flex-1 p-6">
+          <div className="animate-fade-in">
             {children}
-          </motion.div>
-        </Box>
-      </Box>
+          </div>
+        </main>
 
-      {/* Right Sidebar */}
-      {rightSidebarOpen && <RightSidebar />}
-    </Box>
+        {/* Right Sidebar */}
+        <RightSidebar />
+      </div>
+    </div>
   );
 };
 

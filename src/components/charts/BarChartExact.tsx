@@ -1,99 +1,82 @@
 import React from 'react';
-import {
-  BarChart as RechartsBarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts';
-import { Card, CardContent, Typography, Box, useTheme } from '@mui/material';
-import { motion } from 'framer-motion';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useAppSelector } from '../../hooks';
 
 interface BarChartExactProps {
-  data: any[];
-  title: string;
-  height?: number;
+  data: Array<{
+    name: string;
+    actuals: number;
+    projections: number;
+  }>;
 }
 
-const BarChartExact: React.FC<BarChartExactProps> = ({
-  data,
-  title,
-  height = 300,
-}) => {
-  const theme = useTheme();
+const BarChartExact: React.FC<BarChartExactProps> = ({ data }) => {
+  const { mode } = useAppSelector((state) => state.theme);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <Box
-          sx={{
-            backgroundColor: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 2,
-            p: 2,
-            boxShadow: theme.shadows[4],
-          }}
-        >
-          <Typography variant="body2" color={theme.palette.text.secondary}>
+        <div className={`p-3 rounded-lg border shadow-lg ${
+          mode === 'dark' 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <p className={`text-sm font-medium ${
+            mode === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
             {label}
-          </Typography>
-          <Typography variant="body1" sx={{ fontWeight: 'bold', color: theme.palette.text.primary }}>
-            {payload[0].value}M
-          </Typography>
-        </Box>
+          </p>
+          <p className={`text-sm ${
+            mode === 'dark' ? 'text-blue-400' : 'text-blue-600'
+          }`}>
+            Actuals: {payload[0].value}
+          </p>
+          <p className={`text-sm ${
+            mode === 'dark' ? 'text-green-400' : 'text-green-600'
+          }`}>
+            Projections: {payload[1].value}
+          </p>
+        </div>
       );
     }
     return null;
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Card
-        sx={{
-          backgroundColor: theme.palette.background.paper,
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: 2,
-        }}
-      >
-        <CardContent>
-          <Typography variant="h6" sx={{ color: theme.palette.text.primary, fontWeight: 'bold', mb: 2 }}>
-            {title}
-          </Typography>
-          <Box sx={{ width: '100%', height }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <RechartsBarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
-                <XAxis
-                  dataKey="name"
-                  stroke={theme.palette.text.secondary}
-                  fontSize={12}
-                  tick={{ fill: theme.palette.text.secondary }}
-                />
-                <YAxis
-                  stroke={theme.palette.text.secondary}
-                  fontSize={12}
-                  tick={{ fill: theme.palette.text.secondary }}
-                  domain={[0, 30]}
-                  ticks={[0, 10, 20, 30]}
-                  tickFormatter={(value) => `${value}M`}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend />
-                <Bar dataKey="actuals" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="projections" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-              </RechartsBarChart>
-            </ResponsiveContainer>
-          </Box>
-        </CardContent>
-      </Card>
-    </motion.div>
+    <div className={`p-6 rounded-lg border ${
+      mode === 'dark' 
+        ? 'bg-gray-800 border-gray-700' 
+        : 'bg-white border-gray-200'
+    }`}>
+      <h3 className={`text-lg font-semibold mb-4 ${
+        mode === 'dark' ? 'text-white' : 'text-gray-900'
+      }`}>
+        Projections vs Actuals
+      </h3>
+      
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              stroke={mode === 'dark' ? '#374151' : '#e5e7eb'} 
+            />
+            <XAxis 
+              dataKey="name" 
+              stroke={mode === 'dark' ? '#9ca3af' : '#6b7280'}
+              tick={{ fill: mode === 'dark' ? '#9ca3af' : '#6b7280' }}
+            />
+            <YAxis 
+              stroke={mode === 'dark' ? '#9ca3af' : '#6b7280'}
+              tick={{ fill: mode === 'dark' ? '#9ca3af' : '#6b7280' }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="actuals" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="projections" fill="#10b981" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 };
 

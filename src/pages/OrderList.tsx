@@ -1,374 +1,308 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-  Checkbox,
-  Avatar,
-  // Chip,
-  IconButton,
-  useTheme,
-} from '@mui/material';
-import {
-  Add as AddIcon,
-  FilterList as FilterIcon,
-  Sort as SortIcon,
-  Search as SearchIcon,
-  MoreVert as MoreVertIcon,
-  CalendarToday as CalendarIcon,
-  Description as DescriptionIcon,
-} from '@mui/icons-material';
-import { motion } from 'framer-motion';
-
-interface Order {
-  id: string;
-  user: {
-    name: string;
-    avatar: string;
-  };
-  project: string;
-  address: string;
-  date: string;
-  status: 'In Progress' | 'Complete' | 'Pending' | 'Approved' | 'Rejected';
-  hasDocument?: boolean;
-}
+import { useAppSelector } from '../hooks';
+import { Search, Plus, Filter, ArrowUpDown } from 'lucide-react';
 
 const OrderList: React.FC = () => {
-  const theme = useTheme();
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { mode } = useAppSelector((state) => state.theme);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Mock data matching the design
-  const orders: Order[] = [
-    {
-      id: '#CM9801',
-      user: { name: 'Natali Craig', avatar: 'NC' },
-      project: 'Landing Page',
-      address: 'Meadow Lane Oakland',
-      date: 'Just now',
-      status: 'In Progress',
-    },
-    {
-      id: '#CM9802',
-      user: { name: 'Drew Cano', avatar: 'DC' },
-      project: 'E-commerce',
-      address: 'Meadow Lane Oakland',
-      date: 'A minute ago',
-      status: 'Complete',
-    },
-    {
-      id: '#CM9803',
-      user: { name: 'Orlando Diggs', avatar: 'OD' },
-      project: 'Mobile App',
-      address: 'Meadow Lane Oakland',
-      date: 'Yesterday',
-      status: 'Pending',
-    },
-    {
-      id: '#CM9804',
-      user: { name: 'Andi Lane', avatar: 'AL' },
-      project: 'Website Redesign',
-      address: 'Meadow Lane Oakland',
-      date: 'Feb 2, 2023',
-      status: 'Approved',
-    },
-    {
-      id: '#CM9805',
-      user: { name: 'Kate Morrison', avatar: 'KM' },
-      project: 'Dashboard',
-      address: 'Meadow Lane Oakland',
-      date: 'Feb 1, 2023',
-      status: 'Rejected',
-      hasDocument: true,
-    },
-    // Duplicate entries to match the design
-    {
-      id: '#CM9801',
-      user: { name: 'Natali Craig', avatar: 'NC' },
-      project: 'Landing Page',
-      address: 'Meadow Lane Oakland',
-      date: 'Just now',
-      status: 'In Progress',
-    },
-    {
-      id: '#CM9802',
-      user: { name: 'Drew Cano', avatar: 'DC' },
-      project: 'E-commerce',
-      address: 'Meadow Lane Oakland',
-      date: 'A minute ago',
-      status: 'Complete',
-    },
-    {
-      id: '#CM9803',
-      user: { name: 'Orlando Diggs', avatar: 'OD' },
-      project: 'Mobile App',
-      address: 'Meadow Lane Oakland',
-      date: 'Yesterday',
-      status: 'Pending',
-    },
-    {
-      id: '#CM9804',
-      user: { name: 'Andi Lane', avatar: 'AL' },
-      project: 'Website Redesign',
-      address: 'Meadow Lane Oakland',
-      date: 'Feb 2, 2023',
-      status: 'Approved',
-    },
-    {
-      id: '#CM9805',
-      user: { name: 'Kate Morrison', avatar: 'KM' },
-      project: 'Dashboard',
-      address: 'Meadow Lane Oakland',
-      date: 'Feb 1, 2023',
-      status: 'Rejected',
-      hasDocument: true,
-    },
+  // Mock order data matching the design
+  const orders = [
+    { id: '#CM9801', user: 'Natali Craig', project: 'Landing Page', address: 'Meadow Lane Oakland', date: 'Just now', status: 'In Progress', statusColor: 'bg-purple-500' },
+    { id: '#CM9802', user: 'Kate Morrison', project: 'CRM Admin pages', address: 'Larry San Francisco', date: 'A minute ago', status: 'Complete', statusColor: 'bg-green-500' },
+    { id: '#CM9803', user: 'Drew Cano', project: 'Client Project', address: 'Bagwell Avenue Ocala', date: '1 hour ago', status: 'Pending', statusColor: 'bg-blue-500' },
+    { id: '#CM9804', user: 'Orlando Diggs', project: 'Admin Dashboard', address: 'Washburn Baton Rouge', date: 'Yesterday', status: 'Approved', statusColor: 'bg-yellow-500' },
+    { id: '#CM9805', user: 'Andi Lane', project: 'App Landing Page', address: 'Nest Lane Olivette', date: 'Feb 2, 2023', status: 'Rejected', statusColor: 'bg-red-500' },
+    { id: '#CM9806', user: 'Natali Craig', project: 'Landing Page', address: 'Meadow Lane Oakland', date: 'Just now', status: 'In Progress', statusColor: 'bg-purple-500' },
+    { id: '#CM9807', user: 'Kate Morrison', project: 'CRM Admin pages', address: 'Larry San Francisco', date: 'A minute ago', status: 'Complete', statusColor: 'bg-green-500' },
+    { id: '#CM9808', user: 'Drew Cano', project: 'Client Project', address: 'Bagwell Avenue Ocala', date: '1 hour ago', status: 'Pending', statusColor: 'bg-blue-500' },
+    { id: '#CM9809', user: 'Orlando Diggs', project: 'Admin Dashboard', address: 'Washburn Baton Rouge', date: 'Yesterday', status: 'Approved', statusColor: 'bg-yellow-500' },
+    { id: '#CM9810', user: 'Andi Lane', project: 'App Landing Page', address: 'Nest Lane Olivette', date: 'Feb 2, 2023', status: 'Rejected', statusColor: 'bg-red-500' },
   ];
+
+  const filteredOrders = orders.filter(order =>
+    order.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'In Progress':
-        return '#3b82f6';
       case 'Complete':
-        return '#10b981';
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'Pending':
-        return '#06b6d4';
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      case 'In Progress':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
       case 'Approved':
-        return '#f59e0b';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
       case 'Rejected':
-        return '#ef4444';
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
       default:
-        return '#6b7280';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
     }
   };
 
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedOrders = orders.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
   return (
-    <Box sx={{ p: 3, backgroundColor: 'transparent', minHeight: '100vh' }}>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Typography variant="h4" sx={{ color: 'inherit', fontWeight: 'bold', mb: 3 }}>
-          Order List
-        </Typography>
-      </motion.div>
-
-      {/* Action Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton sx={{ color: 'white', backgroundColor: '#2a2a2a', '&:hover': { backgroundColor: '#333' } }}>
-              <AddIcon />
-            </IconButton>
-            <IconButton sx={{ color: 'white', backgroundColor: '#2a2a2a', '&:hover': { backgroundColor: '#333' } }}>
-              <FilterIcon />
-            </IconButton>
-            <IconButton sx={{ color: 'white', backgroundColor: '#2a2a2a', '&:hover': { backgroundColor: '#333' } }}>
-              <SortIcon />
-            </IconButton>
-          </Box>
+    <div className={`min-h-screen ${
+      mode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+    }`}>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className={`text-2xl font-bold ${
+            mode === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Order List
+          </h1>
           
-          <Box
-            sx={{
-              position: 'relative',
-              borderRadius: 1,
-              backgroundColor: theme.palette.action.hover,
-              border: `1px solid ${theme.palette.divider}`,
-              width: 200,
-            }}
-          >
-            <Box
-              sx={{
-                padding: '8px 12px',
-                display: 'flex',
-                alignItems: 'center',
-                pointerEvents: 'none',
-              }}
-            >
-              <SearchIcon sx={{ color: theme.palette.text.secondary, mr: 1, fontSize: 20 }} />
-              <input
-                placeholder="Search"
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: theme.palette.text.primary,
-                  fontSize: '0.875rem',
-                  width: '100%',
-                  outline: 'none',
-                }}
-              />
-            </Box>
-          </Box>
-        </Box>
-      </motion.div>
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-2">
+            <button className={`p-2 rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              <Plus className="w-4 h-4" />
+            </button>
+            <button className={`p-2 rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              <Filter className="w-4 h-4" />
+            </button>
+            <button className={`p-2 rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              <ArrowUpDown className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
 
-      {/* Data Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <TableContainer 
-          component={Paper} 
-          sx={{ 
-            backgroundColor: theme.palette.background.paper, 
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 2,
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  <Checkbox sx={{ color: theme.palette.text.secondary }} />
-                </TableCell>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  Order ID
-                </TableCell>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  User
-                </TableCell>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  Project
-                </TableCell>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  Address
-                </TableCell>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  Date
-                </TableCell>
-                <TableCell sx={{ color: theme.palette.text.secondary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                  Status
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedOrders.map((order, index) => (
-                <TableRow
-                  key={`${order.id}-${index}`}
-                  hover
-                  sx={{
-                      '&:hover': {
-                        backgroundColor: theme.palette.action.hover,
-                      },
-                  }}
-                >
-                  <TableCell sx={{ borderColor: theme.palette.divider }}>
-                    <Checkbox 
-                      sx={{ color: theme.palette.text.secondary }}
-                      checked={order.id === '#CM9804'}
-                    />
-                  </TableCell>
-                    <TableCell sx={{ color: theme.palette.text.primary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                    {order.id}
-                  </TableCell>
-                  <TableCell sx={{ borderColor: '#333' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar sx={{ width: 32, height: 32, bgcolor: '#6366f1', fontSize: '0.75rem' }}>
-                        {order.user.avatar}
-                      </Avatar>
-                      <Typography variant="body2" sx={{ color: 'white', fontSize: '0.875rem' }}>
-                        {order.user.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                    <TableCell sx={{ color: theme.palette.text.primary, borderColor: theme.palette.divider, fontSize: '0.875rem' }}>
-                    {order.project}
-                  </TableCell>
-                  <TableCell sx={{ borderColor: '#333' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body2" sx={{ color: 'white', fontSize: '0.875rem' }}>
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className={`w-4 h-4 ${
+                mode === 'dark' ? 'text-gray-400' : 'text-gray-500'
+              }`} />
+            </div>
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full pl-10 pr-4 py-2 rounded-md border ${
+                mode === 'dark'
+                  ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400'
+                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+        </div>
+
+        {/* Orders Table */}
+        <div className={`rounded-lg border overflow-hidden ${
+          mode === 'dark' 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className={`${
+                mode === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+              }`}>
+                <tr>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Order ID
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    User
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Project
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Address
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Date
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOrders.map((order, index) => (
+                  <tr 
+                    key={index}
+                    className={`border-t ${
+                      mode === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                    } ${
+                      index % 2 === 0 
+                        ? (mode === 'dark' ? 'bg-gray-800' : 'bg-white')
+                        : (mode === 'dark' ? 'bg-gray-750' : 'bg-gray-50')
+                    } hover:${
+                      mode === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+                    } transition-colors`}
+                  >
+                    <td className="py-4 px-6">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className={`rounded border ${
+                            mode === 'dark' 
+                              ? 'border-gray-600 bg-gray-700' 
+                              : 'border-gray-300 bg-white'
+                          }`}
+                        />
+                        <span className={`ml-3 text-sm font-medium ${
+                          mode === 'dark' ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          {order.id}
+                        </span>
+                      </div>
+                    </td>
+                    <td className={`py-4 px-6 text-sm ${
+                      mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white text-xs font-semibold">
+                            {order.user.split(' ').map(n => n[0]).join('')}
+                          </span>
+                        </div>
+                        {order.user}
+                      </div>
+                    </td>
+                    <td className={`py-4 px-6 text-sm ${
+                      mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      {order.project}
+                    </td>
+                    <td className={`py-4 px-6 text-sm ${
+                      mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      <div className="flex items-center">
                         {order.address}
-                      </Typography>
-                      {order.hasDocument && (
-                        <DescriptionIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
-                      )}
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ borderColor: '#333' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <CalendarIcon sx={{ fontSize: 16, color: '#9ca3af' }} />
-                      <Typography variant="body2" sx={{ color: 'white', fontSize: '0.875rem' }}>
+                        <svg className="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                    </td>
+                    <td className={`py-4 px-6 text-sm ${
+                      mode === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
+                      <div className="flex items-center">
+                        <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                         {order.date}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ borderColor: '#333' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          backgroundColor: getStatusColor(order.status),
-                        }}
-                      />
-                      <Typography variant="body2" sx={{ color: 'white', fontSize: '0.875rem' }}>
-                        {order.status}
-                      </Typography>
-                      {order.status === 'Rejected' && (
-                        <IconButton size="small" sx={{ color: '#9ca3af' }}>
-                          <MoreVertIcon sx={{ fontSize: 16 }} />
-                        </IconButton>
-                      )}
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center">
+                        <div className={`w-2 h-2 rounded-full ${order.statusColor} mr-2`}></div>
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
+                          {order.status}
+                        </span>
+                        {order.status === 'Rejected' && (
+                          <svg className="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                          </svg>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex items-center justify-between mt-6">
+          <div className="flex items-center space-x-2">
+            <button className={`px-3 py-2 text-sm rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              &lt;
+            </button>
+            <button className={`px-3 py-2 text-sm rounded-md ${
+              mode === 'dark'
+                ? 'bg-blue-600 text-white'
+                : 'bg-blue-500 text-white'
+            }`}>
+              1
+            </button>
+            <button className={`px-3 py-2 text-sm rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              2
+            </button>
+            <button className={`px-3 py-2 text-sm rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              3
+            </button>
+            <button className={`px-3 py-2 text-sm rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              4
+            </button>
+            <button className={`px-3 py-2 text-sm rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              5
+            </button>
+            <button className={`px-3 py-2 text-sm rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              &gt;
+            </button>
+          </div>
           
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={orders.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            sx={{
-              color: 'white',
-              borderTop: '1px solid #333',
-              '& .MuiTablePagination-toolbar': {
-                color: 'white',
-              },
-              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
-                color: 'white',
-              },
-              '& .MuiIconButton-root': {
-                color: 'white',
-              },
-            }}
-          />
-        </TableContainer>
-      </motion.div>
-    </Box>
+          {/* Bottom pagination indicator */}
+          <div className={`px-4 py-2 rounded-md ${
+            mode === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
+          }`}>
+            <span className={`text-sm ${
+              mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              &lt; 2/4 &gt;
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

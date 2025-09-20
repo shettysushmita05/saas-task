@@ -1,297 +1,148 @@
 import React from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Avatar,
-  IconButton,
-  TextField,
-  InputAdornment,
-  useTheme,
-} from '@mui/material';
-import {
-  Star as StarIcon,
-  Search as SearchIcon,
-  Sun as SunIcon,
-  Clock as ClockIcon,
-  Bell as BellIcon,
-  List as ListIcon,
-} from 'lucide-react';
-import { useAppDispatch } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { toggleTheme, toggleLeftSidebar, toggleRightSidebar } from '../../store/slices/themeSlice';
+import {
+  Star,
+  Search,
+  Sun,
+  Clock,
+  Bell,
+  List,
+} from 'lucide-react';
 
 const TopNavbar: React.FC = () => {
-  const theme = useTheme();
   const dispatch = useAppDispatch();
-  // const { leftSidebarOpen, rightSidebarOpen } = useAppSelector((state) => state.theme);
+  const { mode } = useAppSelector((state) => state.theme);
 
   return (
-    <AppBar
-      position="fixed"
-      sx={{
-        backgroundColor: theme.palette.background.paper,
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        boxShadow: 'none',
-        zIndex: theme.zIndex.drawer + 1,
-      }}
-    >
-      <Toolbar sx={{ justifyContent: 'space-between', px: 3 }}>
+    <div className={`fixed top-0 left-0 right-0 z-50 h-16 border-b ${
+      mode === 'dark' 
+        ? 'bg-white border-gray-200' 
+        : 'bg-white border-gray-200'
+    }`}>
+      <div className="flex items-center justify-between h-full px-6">
         {/* Left Section - User Profile and Navigation */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <div className="flex items-center ">
           {/* User Profile */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Avatar
-              sx={{
-                width: 32,
-                height: 32,
-                bgcolor: theme.palette.primary.main,
-                fontSize: '0.875rem',
-              }}
-            >
-              B
-            </Avatar>
-            <Typography
-              variant="body1"
-              sx={{
-                color: theme.palette.text.primary,
-                fontWeight: 500,
-                fontSize: '0.875rem',
-              }}
-            >
+          <div className="flex items-center mr-20 space-x-3">
+            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-medium">B</span>
+            </div>
+            <span className={`text-sm font-medium ${
+              mode === 'dark' ? 'text-gray-900' : 'text-gray-900'
+            }`}>
               ByeWind
-            </Typography>
-          </Box>
+            </span>
+          </div>
 
-          {/* Separator */}
-          <Box
-            sx={{
-              width: 1,
-              height: 20,
-              backgroundColor: theme.palette.success.main,
-              mx: 1,
-            }}
-          />
+          
 
           {/* Navigation Icons */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton
-              size="small"
+          <div className="flex items-center space-x-2">
+            <button
               onClick={() => dispatch(toggleLeftSidebar())}
-              sx={{
-                color: theme.palette.text.secondary,
-                '&:hover': {
-                  backgroundColor: theme.palette.action.hover,
-                },
-              }}
+              className={`p-1.5 rounded-md hover:bg-gray-100 ${
+                mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+              }`}
             >
-              <ListIcon size={16} />
-            </IconButton>
-            <IconButton
-              size="small"
-              sx={{
-                color: theme.palette.text.secondary,
-                '&:hover': {
-                  backgroundColor: theme.palette.action.hover,
-                },
-              }}
+              <List size={16} />
+            </button>
+            <button
+              className={`p-1.5 rounded-md hover:bg-gray-100 ${
+                mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+              }`}
             >
-              <StarIcon size={16} />
-            </IconButton>
-          </Box>
+              <Star size={16} />
+            </button>
+          </div>
 
           {/* Breadcrumb */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: '0.875rem',
-              }}
-            >
+          <div className="flex items-center space-x-1">
+            <span className={`text-sm ${
+              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            }`}>
               Dashboards
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: '0.875rem',
-              }}
-            >
+            </span>
+            <span className={`text-sm ${
+              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            }`}>
               /
-            </Typography>
-            <Box sx={{ position: 'relative' }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: theme.palette.text.primary,
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                }}
-              >
+            </span>
+            <div className="relative">
+              <span className={`text-sm font-medium ${
+                mode === 'dark' ? 'text-gray-900' : 'text-gray-900'
+              }`}>
                 Default
-              </Typography>
-              {/* Orange badge */}
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: -8,
-                  left: -8,
-                  width: 16,
-                  height: 12,
-                  backgroundColor: '#f59e0b',
-                  borderRadius: 0.5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'white',
-                    fontSize: '0.625rem',
-                    fontWeight: 'bold',
-                    lineHeight: 1,
-                  }}
-                >
-                  3F
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+              </span>
+              
+            </div>
+          </div>
+        </div>
 
         {/* Center Section - Search Bar */}
-        <Box sx={{ flex: 1, maxWidth: 400, mx: 4 }}>
-          <TextField
-            placeholder="Search"
-            size="small"
-            fullWidth
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon size={16} color={theme.palette.text.secondary} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      color: theme.palette.text.secondary,
-                      fontSize: '0.75rem',
-                    }}
-                  >
-                    <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
-                      ⌘
-                    </Typography>
-                    <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
-                      /
-                    </Typography>
-                  </Box>
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: theme.palette.action.hover,
-                borderRadius: 1,
-                '& fieldset': {
-                  border: 'none',
-                },
-                '&:hover fieldset': {
-                  border: 'none',
-                },
-                '&.Mui-focused fieldset': {
-                  border: 'none',
-                },
-              },
-              '& .MuiInputBase-input': {
-                color: theme.palette.text.primary,
-                fontSize: '0.875rem',
-                '&::placeholder': {
-                  color: theme.palette.text.secondary,
-                  opacity: 1,
-                },
-              },
-            }}
-          />
-        </Box>
+        <div className="flex-1 max-w-md ">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={10} className="text-gray-500" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full pl-10 pr-16 py-2 rounded-md border-0 bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            
+          </div>
+        </div>
 
         {/* Right Section - Utility Icons */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <div className="flex items-center space-x-2">
           {/* Theme Toggle */}
-          <IconButton
-            size="small"
+          <button
             onClick={() => dispatch(toggleTheme())}
-            sx={{
-              color: theme.palette.text.secondary,
-              '&:hover': {
-                backgroundColor: theme.palette.action.hover,
-              },
-            }}
+            className={`p-1.5 rounded-md hover:bg-gray-100 ${
+              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            }`}
           >
-            <SunIcon size={16} />
-          </IconButton>
+            <Sun size={16} />
+          </button>
 
           {/* Clock Icon */}
-          <IconButton
-            size="small"
-            sx={{
-              color: theme.palette.text.secondary,
-              '&:hover': {
-                backgroundColor: theme.palette.action.hover,
-              },
-            }}
+          <button
+            className={`p-1.5 rounded-md hover:bg-gray-100 ${
+              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            }`}
           >
-            <ClockIcon size={16} />
-          </IconButton>
+            <Clock size={16} />
+          </button>
 
           {/* Notifications */}
-          <IconButton
-            size="small"
-            sx={{
-              color: theme.palette.text.secondary,
-              '&:hover': {
-                backgroundColor: theme.palette.action.hover,
-              },
-            }}
+          <button
+            className={`p-1.5 rounded-md hover:bg-gray-100 ${
+              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            }`}
           >
-            <BellIcon size={16} />
-          </IconButton>
+            <Bell size={16} />
+          </button>
 
           {/* Right Sidebar Toggle */}
-          <IconButton
-            size="small"
+          <button
             onClick={() => dispatch(toggleRightSidebar())}
-            sx={{
-              color: theme.palette.text.secondary,
-              '&:hover': {
-                backgroundColor: theme.palette.action.hover,
-              },
-            }}
+            className={`p-1.5 rounded-md hover:bg-gray-100 ${
+              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            }`}
           >
-            <ListIcon size={16} />
-          </IconButton>
+            <List size={16} />
+          </button>
 
           {/* Notifications Text */}
-          <Typography
-            variant="body2"
-            sx={{
-              color: theme.palette.text.primary,
-              fontWeight: 600,
-              fontSize: '0.875rem',
-              ml: 1,
-            }}
-          >
+          <span className={`text-sm font-semibold ml-2 ${
+            mode === 'dark' ? 'text-gray-900' : 'text-gray-900'
+          }`}>
             Notifications
-          </Typography>
-        </Box>
-      </Toolbar>
-    </AppBar>
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };
 

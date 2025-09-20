@@ -1,239 +1,208 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Grid,
-  Box,
-  Typography,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  Card,
-  CardContent,
-} from '@mui/material';
-import { Search, FilterList, Add } from '@mui/icons-material';
-import { motion } from 'framer-motion';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { setData, setSearchTerm, setFilterStatus, applyFilters } from '../store/slices/dashboardSlice';
-import DataTable from '../components/ui/DataTable';
-import type { User } from '../types';
-
-// Extended mock data
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'Admin',
-    status: 'active',
-    lastLogin: '2024-01-15',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    role: 'User',
-    status: 'active',
-    lastLogin: '2024-01-14',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-  },
-  {
-    id: '3',
-    name: 'Bob Johnson',
-    email: 'bob.johnson@example.com',
-    role: 'Moderator',
-    status: 'inactive',
-    lastLogin: '2024-01-10',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-  },
-  {
-    id: '4',
-    name: 'Alice Brown',
-    email: 'alice.brown@example.com',
-    role: 'User',
-    status: 'pending',
-    lastLogin: '2024-01-12',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-  },
-  {
-    id: '5',
-    name: 'Charlie Wilson',
-    email: 'charlie.wilson@example.com',
-    role: 'Admin',
-    status: 'active',
-    lastLogin: '2024-01-15',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-  },
-  {
-    id: '6',
-    name: 'Diana Prince',
-    email: 'diana.prince@example.com',
-    role: 'User',
-    status: 'active',
-    lastLogin: '2024-01-13',
-    avatar: 'https://i.pravatar.cc/150?img=6',
-  },
-  {
-    id: '7',
-    name: 'Eve Adams',
-    email: 'eve.adams@example.com',
-    role: 'Moderator',
-    status: 'inactive',
-    lastLogin: '2024-01-08',
-    avatar: 'https://i.pravatar.cc/150?img=7',
-  },
-  {
-    id: '8',
-    name: 'Frank Miller',
-    email: 'frank.miller@example.com',
-    role: 'User',
-    status: 'pending',
-    lastLogin: '2024-01-11',
-    avatar: 'https://i.pravatar.cc/150?img=8',
-  },
-];
+import React, { useState } from 'react';
+import { useAppSelector } from '../hooks';
+import { Search, Plus, Filter, ArrowUpDown } from 'lucide-react';
 
 const Users: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { searchTerm, filterStatus, filteredData } = useAppSelector((state) => state.dashboard);
-  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+  const { mode } = useAppSelector((state) => state.theme);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    dispatch(setData(mockUsers));
-    dispatch(applyFilters());
-  }, [dispatch]);
+  // Mock user data
+  const users = [
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', avatar: 'JD' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', avatar: 'JS' },
+    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Editor', status: 'Inactive', avatar: 'BJ' },
+    { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'User', status: 'Active', avatar: 'AB' },
+    { id: 5, name: 'Charlie Wilson', email: 'charlie@example.com', role: 'Admin', status: 'Active', avatar: 'CW' },
+  ];
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setLocalSearchTerm(value);
-    dispatch(setSearchTerm(value));
-    dispatch(applyFilters());
-  };
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleStatusFilterChange = (event: any) => {
-    const value = event.target.value;
-    dispatch(setFilterStatus(value));
-    dispatch(applyFilters());
-  };
-
-  const handleEditUser = (user: User) => {
-    console.log('Edit user:', user);
-  };
-
-  const handleDeleteUser = (user: User) => {
-    console.log('Delete user:', user);
-  };
-
-  const handleViewUser = (user: User) => {
-    console.log('View user:', user);
-  };
-
-  const handleAddUser = () => {
-    console.log('Add new user');
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'Inactive':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    }
   };
 
   return (
-    <Box>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-            User Management
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={handleAddUser}
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500,
-            }}
-          >
-            Add User
-          </Button>
-        </Box>
-      </motion.div>
+    <div className={`min-h-screen ${
+      mode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+    }`}>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className={`text-2xl font-bold ${
+            mode === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>
+            Users
+          </h1>
+          
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-2">
+            <button className={`p-2 rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              <Plus className="w-4 h-4" />
+            </button>
+            <button className={`p-2 rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              <Filter className="w-4 h-4" />
+            </button>
+            <button className={`p-2 rounded-md border ${
+              mode === 'dark'
+                ? 'bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+            }`}>
+              <ArrowUpDown className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
 
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Grid container spacing={3} alignItems="center">
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  fullWidth
-                  placeholder="Search users..."
-                  value={localSearchTerm}
-                  onChange={handleSearchChange}
-                  InputProps={{
-                    startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />,
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <FormControl fullWidth>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={filterStatus}
-                    label="Status"
-                    onChange={handleStatusFilterChange}
-                    sx={{ borderRadius: 2 }}
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className={`w-4 h-4 ${
+                mode === 'dark' ? 'text-gray-400' : 'text-gray-500'
+              }`} />
+            </div>
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full pl-10 pr-4 py-2 rounded-md border ${
+                mode === 'dark'
+                  ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400'
+                  : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+        </div>
+
+        {/* Users Table */}
+        <div className={`rounded-lg border overflow-hidden ${
+          mode === 'dark' 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className={`${
+                mode === 'dark' ? 'bg-gray-700' : 'bg-gray-50'
+              }`}>
+                <tr>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    User
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Email
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Role
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Status
+                  </th>
+                  <th className={`text-left py-4 px-6 text-sm font-medium ${
+                    mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user, index) => (
+                  <tr 
+                    key={user.id}
+                    className={`border-t ${
+                      mode === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                    } ${
+                      index % 2 === 0 
+                        ? (mode === 'dark' ? 'bg-gray-800' : 'bg-white')
+                        : (mode === 'dark' ? 'bg-gray-750' : 'bg-gray-50')
+                    } hover:${
+                      mode === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+                    } transition-colors`}
                   >
-                    <MenuItem value="all">All Status</MenuItem>
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                    <MenuItem value="pending">Pending</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<FilterList />}
-                  fullWidth
-                  sx={{
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontWeight: 500,
-                  }}
-                >
-                  More Filters
-                </Button>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Data Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <DataTable
-          data={filteredData}
-          onEdit={handleEditUser}
-          onDelete={handleDeleteUser}
-          onView={handleViewUser}
-        />
-      </motion.div>
-    </Box>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white text-sm font-semibold">
+                            {user.avatar}
+                          </span>
+                        </div>
+                        <div>
+                          <p className={`text-sm font-medium ${
+                            mode === 'dark' ? 'text-white' : 'text-gray-900'
+                          }`}>
+                            {user.name}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className={`py-4 px-6 text-sm ${
+                      mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      {user.email}
+                    </td>
+                    <td className={`py-4 px-6 text-sm ${
+                      mode === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
+                      {user.role}
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(user.status)}`}>
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center space-x-2">
+                        <button className={`px-3 py-1 text-xs rounded ${
+                          mode === 'dark'
+                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                            : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}>
+                          Edit
+                        </button>
+                        <button className={`px-3 py-1 text-xs rounded ${
+                          mode === 'dark'
+                            ? 'bg-red-600 text-white hover:bg-red-700'
+                            : 'bg-red-500 text-white hover:bg-red-600'
+                        }`}>
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
