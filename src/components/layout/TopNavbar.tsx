@@ -15,25 +15,15 @@ const TopNavbar: React.FC = () => {
   const { mode } = useAppSelector((state) => state.theme);
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 h-16 border-b ${
+    <div className={`h-16 border-b ${
       mode === 'dark' 
-        ? 'bg-white border-gray-200' 
+        ? 'bg-black border-gray-700' 
         : 'bg-white border-gray-200'
     }`}>
       <div className="flex items-center justify-between h-full px-6">
         {/* Left Section - User Profile and Navigation */}
         <div className="flex items-center ">
-          {/* User Profile */}
-          <div className="flex items-center mr-20 space-x-3">
-            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">B</span>
-            </div>
-            <span className={`text-sm font-medium ${
-              mode === 'dark' ? 'text-gray-900' : 'text-gray-900'
-            }`}>
-              ByeWind
-            </span>
-          </div>
+          
 
           
 
@@ -41,15 +31,15 @@ const TopNavbar: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => dispatch(toggleLeftSidebar())}
-              className={`p-1.5 rounded-md hover:bg-gray-100 ${
-                mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+              className={`p-1.5 rounded-md ${
+                mode === 'dark' ? 'text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               <List size={16} />
             </button>
             <button
-              className={`p-1.5 rounded-md hover:bg-gray-100 ${
-                mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+              className={`p-1.5 rounded-md ${
+                mode === 'dark' ? 'text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               <Star size={16} />
@@ -59,18 +49,18 @@ const TopNavbar: React.FC = () => {
           {/* Breadcrumb */}
           <div className="flex items-center space-x-1">
             <span className={`text-sm ${
-              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+              mode === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               Dashboards
             </span>
             <span className={`text-sm ${
-              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+              mode === 'dark' ? 'text-gray-300' : 'text-gray-600'
             }`}>
               /
             </span>
             <div className="relative">
               <span className={`text-sm font-medium ${
-                mode === 'dark' ? 'text-gray-900' : 'text-gray-900'
+                mode === 'dark' ? 'text-white' : 'text-gray-900'
               }`}>
                 Default
               </span>
@@ -80,7 +70,7 @@ const TopNavbar: React.FC = () => {
         </div>
 
         {/* Center Section - Search Bar */}
-        <div className="flex-1 max-w-md ">
+        <div className="flex-1 max-w-xs ml-auto mr-15">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search size={10} className="text-gray-500" />
@@ -88,7 +78,11 @@ const TopNavbar: React.FC = () => {
             <input
               type="text"
               placeholder="Search"
-              className="w-full pl-10 pr-16 py-2 rounded-md border-0 bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full pl-10 pr-16 py-2 rounded-md border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                mode === 'dark' 
+                  ? 'bg-gray-800 text-white placeholder-gray-400' 
+                  : 'bg-gray-100 text-gray-900 placeholder-gray-500'
+              }`}
             />
             
           </div>
@@ -99,8 +93,8 @@ const TopNavbar: React.FC = () => {
           {/* Theme Toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
-            className={`p-1.5 rounded-md hover:bg-gray-100 ${
-              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            className={`p-1.5 rounded-md ${
+              mode === 'dark' ? 'text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             <Sun size={16} />
@@ -108,8 +102,8 @@ const TopNavbar: React.FC = () => {
 
           {/* Clock Icon */}
           <button
-            className={`p-1.5 rounded-md hover:bg-gray-100 ${
-              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            className={`p-1.5 rounded-md ${
+              mode === 'dark' ? 'text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             <Clock size={16} />
@@ -117,8 +111,8 @@ const TopNavbar: React.FC = () => {
 
           {/* Notifications */}
           <button
-            className={`p-1.5 rounded-md hover:bg-gray-100 ${
-              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            className={`p-1.5 rounded-md ${
+              mode === 'dark' ? 'text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             <Bell size={16} />
@@ -127,19 +121,15 @@ const TopNavbar: React.FC = () => {
           {/* Right Sidebar Toggle */}
           <button
             onClick={() => dispatch(toggleRightSidebar())}
-            className={`p-1.5 rounded-md hover:bg-gray-100 ${
-              mode === 'dark' ? 'text-gray-600' : 'text-gray-600'
+            className={`p-1.5 rounded-md ${
+              mode === 'dark' ? 'text-white hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             <List size={16} />
           </button>
 
           {/* Notifications Text */}
-          <span className={`text-sm font-semibold ml-2 ${
-            mode === 'dark' ? 'text-gray-900' : 'text-gray-900'
-          }`}>
-            Notifications
-          </span>
+          
         </div>
       </div>
     </div>

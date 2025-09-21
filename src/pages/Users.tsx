@@ -28,13 +28,13 @@ const Users: React.FC = () => {
       case 'Inactive':
         return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-300';
     }
   };
 
   return (
     <div className={`min-h-screen ${
-      mode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+      mode === 'dark' ? 'bg-black' : 'bg-gray-50'
     }`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}

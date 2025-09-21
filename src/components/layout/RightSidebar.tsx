@@ -118,16 +118,20 @@ const RightSidebar: React.FC = () => {
   return (
     <div className={`w-80 h-screen flex flex-col border-l ${
       mode === 'dark' 
-        ? 'bg-gray-800 border-gray-700' 
+        ? 'bg-black border-black' 
         : 'bg-white border-gray-200'
     }`}>
-      {/* Notifications Section */}
-      <div className="p-6">
-        <h3 className={`text-lg font-semibold mb-4 ${
+      {/* Header with Notifications Title */}
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className={`text-lg font-semibold ${
           mode === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
           Notifications
-        </h3>
+        </h2>
+      </div>
+
+      {/* Notifications Section */}
+      <div className="p-6">
         
         <div className="space-y-3">
           {notifications.map((notification) => (

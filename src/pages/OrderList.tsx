@@ -39,13 +39,13 @@ const OrderList: React.FC = () => {
       case 'Rejected':
         return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-300';
     }
   };
 
   return (
     <div className={`min-h-screen ${
-      mode === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+      mode === 'dark' ? 'bg-black' : 'bg-gray-50'
     }`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -237,7 +237,7 @@ const OrderList: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between mt-6">
+        <div className="flex items-end justify-end mt-6">
           <div className="flex items-center space-x-2">
             <button className={`px-3 py-2 text-sm rounded-md border ${
               mode === 'dark'
@@ -291,7 +291,7 @@ const OrderList: React.FC = () => {
           </div>
           
           {/* Bottom pagination indicator */}
-          <div className={`px-4 py-2 rounded-md ${
+          {/* <div className={`px-4 py-2 rounded-md ${
             mode === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
           }`}>
             <span className={`text-sm ${
@@ -299,7 +299,7 @@ const OrderList: React.FC = () => {
             }`}>
               &lt; 2/4 &gt;
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
